@@ -12,11 +12,11 @@ BUILD_PLATFORMS ?= linux/amd64,linux/arm64
 # Note: buildx requires a builder with multi-platform support. If you don't have one,
 # create it with: docker buildx create --use
 build:
-	docker buildx build --platform $(BUILD_PLATFORMS) -t $(IMAGE) --push -f containerfile .
+	docker buildx build --platform $(BUILD_PLATFORMS) -t $(IMAGE) .
 
 # The build target already pushes the multi-arch image. Keep `push` for compatibility.
 push:
-	@echo "The 'build' target uses buildx and already pushes a multi-arch image: $(IMAGE)"
+	docker push $(IMAGE)
 
 pull:
 	docker pull $(IMAGE)
