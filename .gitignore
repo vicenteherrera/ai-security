@@ -1,0 +1,6 @@
+attestation/.cache/**
+attestation/pubkeys/**
+attestation/cosign/**
+attestation/digest/**
+attestation/gpg/**
+attestation/mlbom/**
