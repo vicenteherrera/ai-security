@@ -4,3 +4,4 @@ attestation/cosign/**
 attestation/digest/**
 attestation/gpg/**
 attestation/mlbom/**
+attestation/digest.digest
