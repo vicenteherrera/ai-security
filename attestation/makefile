@@ -8,8 +8,8 @@ SHELL := /bin/bash
 
 #  "stabilityai/stable-diffusion-2-1", revision="refs/pr/22", use_safetensors=True
 
-MODEL=TinyLlama/TinyLlama-1.1B-Chat-v1.0
-COMMIT=ce0c99637bf2aba3265ec4675b50eadb26ac5a21
+MODEL=HuggingFaceTB/SmolLM-135M
+COMMIT=1d461723eec654e65efdc40cf49301c89c0c92f4
 MODEL_DIR=./.cache/huggingface/hub/${MODEL}
 
 DIGEST_DIR=$(shell pwd)/digest
@@ -71,8 +71,7 @@ run-generate-digest:
 	@echo "Calculating hash of individual files for ${MODEL} into ${DIGEST_DIR}" && \
 	mkdir -p ${DIGEST_DIR}/${MODEL} && \
 	cd "./.cache/huggingface/hub/" && \
-	find ${MODEL} -type f | xargs -I {} sh -c 'sha1sum {} | tee ${DIGEST_DIR}/{}.digest'
-
+	find ${MODEL} -type f | xargs -I {} sh -c 'file=${DIGEST_DIR}/{} && mkdir -p $$(dirname "$$file") && sha1sum {} | tee "$$file.digest"'
 	@echo ""
 	@echo "Calculating hash of global directory for ${MODEL}"
 	@cd "./.cache/huggingface/hub/" && \
@@ -82,19 +81,24 @@ run-validate-digest:
 	@echo "Validating hash of individual files for ${MODEL} into ${DIGEST_DIR}" && \
 	mkdir -p ${DIGEST_DIR}/${MODEL} && \
 	cd "./.cache/huggingface/hub/" && \
-	find ${MODEL} -type f | xargs -I {} sh -c '[ "$$(sha1sum {})" = "$$(cat ${DIGEST_DIR}/{}.digest)" ] && echo "[ Valid ] {}" || echo "[*ERROR*] {}"'
+	find ${MODEL} -type f -exec sh -c 'file=${DIGEST_DIR}/{} && [ "$$(sha1sum {})" = "$$(cat "$$file.digest")" ] && echo "[ Valid ] $$file" || echo "[*ERROR*] $$file"' {} \; 
 	@echo ""
-	@echo "Calculating hash of global directory for ${MODEL}"
+	@echo "Validating hash of global directory for ${MODEL}"
 	@cd "./.cache/huggingface/hub/" && \
 	[ "$$(find ${MODEL} -type f \( -exec sha1sum {} \; \) | awk '{print $1}' | sort | sha1sum)" = "$$(cat ${DIGEST_DIR}.digest)" ] && echo "[ Valid ] ${DIGEST_DIR}.digest" || echo "[*ERROR*] ${DIGEST_DIR}.digest"
 
 # gpg
 
 run-gpg-sign:
-	@echo "Gpg sign individual files for ${MODEL} into ${GPG_DIR}" && \
+	@echo "GPG sign individual files for ${MODEL} into ${GPG_DIR}" && \
 	mkdir -p ${GPG_DIR}/${MODEL} && \
 	cd "./.cache/huggingface/hub/" && \
-	find ${MODEL} -type f | xargs -I {} sh -c 'echo "{}" && gpg --output ${GPG_DIR}/{}.sig --yes --detach-sign {}' +
+	find ${MODEL} -type f | while read file; do \
+		sig_file="${GPG_DIR}/$$file.sig"; \
+		mkdir -p "$$(dirname "$$sig_file")" && \
+		echo "Signing: $$file" && \
+		gpg --output "$$sig_file" --yes --detach-sign "$$file"; \
+	done
 
 run-gpg-verify:
 	@echo "Gpg sign individual files for ${MODEL} into ${GPG_DIR}" && \
