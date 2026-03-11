@@ -8,8 +8,11 @@ SHELL := /bin/bash
 
 #  "stabilityai/stable-diffusion-2-1", revision="refs/pr/22", use_safetensors=True
 
-MODEL=HuggingFaceTB/SmolLM-135M
-COMMIT=1d461723eec654e65efdc40cf49301c89c0c92f4
+# MODEL=hf-internal-testing/tiny-random-bert
+# COMMIT=f171d7baecaf37b5da5a3616d8833b9969753535
+
+MODEL=hf-internal-testing/tiny-random-bert
+COMMIT=f171d7baecaf37b5da5a3616d8833b9969753535
 MODEL_DIR=./.cache/huggingface/hub/${MODEL}
 
 DIGEST_DIR=$(shell pwd)/digest
