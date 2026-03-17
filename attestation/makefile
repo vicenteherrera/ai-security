@@ -51,23 +51,27 @@ help:
 	@echo "# Validate model files with gpg detached signatures"
 	@echo "make run-gpg-verify"
 	@echo "---------------------------------------------------------"
+	@echo "# Generate a CycloneDX BOM file from model"
+	@echo "make run-mlbom-generate"
+	@echo "# Generate a key pair for signing ML-BOMs with CycloneDX keygen"
+	@echo "make mlbom-keygen"
+	@echo "# Analyze the generated ML-BOM for version relationships"
+	@echo "make run-mlbom-analyze"
+	@echo "# Validate the generated ML-BOM for schema correctness"
+	@echo "make run-mlbom-validate"
+	@echo "# Sign the generated CycloneDX BOM file with a private key"
+	@echo "make run-mlbom-reference-sign"
+	@echo "# Verify the signature of the reference CycloneDX BOM file provided"
+	@echo "make run-mlbom-reference-verify-sign"
+	@echo "# Conventional diff the generated and signed reference CycloneDX BOM files"
+	@echo "make run-mlbom-diff"
+	@echo "---------------------------------------------------------"
 	@echo "# Generate a Cosign key pair for signing model files"
 	@echo "make cosign-generate-key-pair"
 	@echo "# Sign model files with cosign detached signatures"
 	@echo "make run-cosign-sign"
 	@echo "# Validate model files with cosign detached signatures"
 	@echo "make run-cosign-verify"
-	@echo "---------------------------------------------------------"
-	@echo "# Generate a CycloneDX BOM file from model"
-	@echo "make run-mlbom-generate"
-	@echo "# Generate a key pair for signing ML-BOMs with CycloneDX keygen"
-	@echo "make mlbom-keygen"
-	@echo "# Sign the generated CycloneDX BOM file with a private key"
-	@echo "make run-mlbom-reference-sign"
-	@echo "# Verify the signature of the reference CycloneDX BOM file provided"
-	@echo "make run-mlbom-verify-sign"
-	@echo "# Conventional diff the generated and reference CycloneDX BOM files"
-	@echo "make run-mlbom-diff"
 	@echo "---------------------------------------------------------"
 	@echo "# Verify signed container with inference code using public key and cosign against online rekor"
 	@echo "make container-pull run-container-verify-key"
@@ -151,7 +155,7 @@ mlbom-keygen:
 		--private-key-file $$HOME/.ssh/mlbom.key \
 		--public-key-file pubkeys/mlbom.pub
 
-.PHONY: run-mlbom-verify-sign
+.PHONY: run-mlbom-analyze
 # Analyze the generated ML-BOM and report version relationships.
 run-mlbom-analyze:
 	cyclonedx analyze --input-format xml \
@@ -173,7 +177,7 @@ run-mlbom-reference-sign:
 	cyclonedx sign bom mlbom/${MODEL}/mlbom.xml \
 		--key-file $$HOME/.ssh/mlbom.key
 
-.PHONY: run-mlbom-verify-sign
+.PHONY: run-mlbom-reference-verify-sign
 # Verify signatures in the reference ML-BOM using the public key.
 run-mlbom-reference-verify-sign:
 	@[ -f "./pubkeys/mlbom.pub" ] || { echo "[*ERROR*] Requires public key at ./pubkeys/mlbom.pub"; exit 1; };
