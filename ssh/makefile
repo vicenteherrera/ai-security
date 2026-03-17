@@ -1,6 +1,8 @@
 .PHONY: build push pull build-and-push run stop
 
 REGISTRY ?= quay.io/vicenteherrera
+# REGISTRY ?= docker.io/vicenteherrera
+
 IMAGE_NAME ?= example-ssh
 IMAGE_TAG ?= latest
 IMAGE := $(REGISTRY)/$(IMAGE_NAME):$(IMAGE_TAG)
@@ -11,7 +13,11 @@ BUILD_PLATFORMS ?= linux/amd64,linux/arm64
 # Use docker buildx to build a multi-arch image and push the manifest to the registry.
 # Note: buildx requires a builder with multi-platform support. If you don't have one,
 # create it with: docker buildx create --use
+
 build:
+	docker build -t $(IMAGE) .
+
+build-multiplatform:
 	docker buildx build --platform $(BUILD_PLATFORMS) -t $(IMAGE) .
 
 # The build target already pushes the multi-arch image. Keep `push` for compatibility.
