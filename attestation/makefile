@@ -91,11 +91,15 @@ run-digest-generate:
 	@echo "Calculating hash of individual files for ${MODEL} into ${DIGEST_DIR}" && \
 	mkdir -p ${DIGEST_DIR}/${MODEL} && \
 	cd "./.cache/huggingface/hub/" && \
-	find ${MODEL} -type f | xargs -I {} sh -c 'file=${DIGEST_DIR}/{} && mkdir -p $$(dirname "$$file") && sha1sum {} | tee "$$file.digest"'
+	find ${MODEL} -type f | while read file; do \
+		digest_file="${DIGEST_DIR}/$$file.digest"; \
+		mkdir -p "$$(dirname "$$digest_file")"; \
+		sha1sum "$$file" | tee "$$digest_file"; \
+	done
 	@echo ""
 	@echo "Calculating hash of global directory for ${MODEL}"
 	@cd "./.cache/huggingface/hub/" && \
-	find ${MODEL} -type f \( -exec sha1sum {} \; \) | awk '{print $1}' | sort | sha1sum | tee ${DIGEST_DIR}.digest
+	find ${MODEL} -type f \( -exec sha1sum "{}" \; \) | awk '{print $1}' | sort | sha1sum | tee "${DIGEST_DIR}.digest"
 	
 
 .PHONY: run-digest-validate
@@ -103,11 +107,11 @@ run-digest-generate:
 run-digest-validate:
 	@echo "Validating hash of individual files for ${MODEL} into ${DIGEST_DIR}" && \
 	cd "./.cache/huggingface/hub/" && \
-	find ${MODEL} -type f -exec sh -c 'file=${DIGEST_DIR}/{} && [ "$$(sha1sum {})" = "$$(cat "$$file.digest")" ] && echo "[ Valid ] $$file" || echo "[*ERROR*] $$file"' {} \; 
+	find ${MODEL} -type f -exec sh -c 'file="${DIGEST_DIR}/{}" && [ "$$(sha1sum {})" = "$$(cat "$$file.digest")" ] && echo "[ Valid ] $$file" || echo "[*ERROR*] $$file"' {} \; 
 	@echo ""
 	@echo "Validating hash of global directory for ${MODEL}"
 	@cd "./.cache/huggingface/hub/" && \
-	[ "$$(find ${MODEL} -type f \( -exec sha1sum {} \; \) | awk '{print $1}' | sort | sha1sum)" = "$$(cat ${DIGEST_DIR}.digest)" ] && echo "[ Valid ] ${DIGEST_DIR}.digest" || echo "[*ERROR*] ${DIGEST_DIR}.digest"
+	[ "$$(find ${MODEL} -type f \( -exec sha1sum "{}" \; \) | awk '{print $1}' | sort | sha1sum)" = "$$(cat "${DIGEST_DIR}.digest")" ] && echo "[ Valid ] ${DIGEST_DIR}.digest" || echo "[*ERROR*] ${DIGEST_DIR}.digest"
 
 # gpg ---------------------------------------------------------
 
