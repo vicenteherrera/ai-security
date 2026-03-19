@@ -59,11 +59,11 @@ help:
 	@echo "make run-mlbom-analyze"
 	@echo "# Validate the generated ML-BOM for schema correctness"
 	@echo "make run-mlbom-validate"
-	@echo "# Sign the generated CycloneDX BOM file with a private key"
-	@echo "make run-mlbom-reference-sign"
-	@echo "# Verify the signature of the reference CycloneDX BOM file provided"
-	@echo "make run-mlbom-reference-verify-sign"
-	@echo "# Conventional diff the generated and signed reference CycloneDX BOM files"
+	@echo "# Sign the generated CycloneDX BOM file with a private key, store an unsigned reference copy"
+	@echo "make run-mlbom-sign"
+	@echo "# Verify the signature of the signed CycloneDX BOM file"
+	@echo "make run-mlbom-verify-sign"
+	@echo "# Conventional diff the generated and signed CycloneDX BOM files"
 	@echo "make run-mlbom-diff"
 	@echo "---------------------------------------------------------"
 	@echo "# Generate a Cosign key pair for signing model files"
@@ -173,19 +173,20 @@ mlbom-keygen:
 		--private-key-file "$$HOME/.ssh/mlbom.key" \
 		--public-key-file "pubkeys/mlbom.pub"
 
-.PHONY: run-mlbom-reference-sign
+.PHONY: run-mlbom-sign
 # Copy current ML-BOM as reference and sign it with the private key.
-run-mlbom-reference-sign:
+run-mlbom-sign:
 	@[ -f "$$HOME/.ssh/mlbom.key" ] || { echo "[*ERROR*] Requires private key at $$HOME/.ssh/mlbom.key"; exit 1; };
+	@echo "Copy a reference of unsigned mlbom for later comparison"
 	cp "mlbom/${MODEL}/mlbom.xml" "mlbom/${MODEL}/mlbom-reference.xml"
 	cyclonedx sign bom "mlbom/${MODEL}/mlbom.xml" \
 		--key-file "$$HOME/.ssh/mlbom.key"
 
-.PHONY: run-mlbom-reference-verify-sign
+.PHONY: run-mlbom-verify-sign
 # Verify signatures in the reference ML-BOM using the public key.
-run-mlbom-reference-verify-sign:
+run-mlbom-verify-sign:
 	@[ -f "./pubkeys/mlbom.pub" ] || { echo "[*ERROR*] Requires public key at ./pubkeys/mlbom.pub"; exit 1; };
-	cyclonedx verify all "mlbom/${MODEL}/mlbom-reference.xml" \
+	cyclonedx verify all "mlbom/${MODEL}/mlbom.xml" \
 		--key-file "./pubkeys/mlbom.pub"
 
 .PHONY: run-mlbom-diff
@@ -231,9 +232,9 @@ crun-mlbom-validate:
 		--input-file "mlbom/${MODEL}/mlbom.xml" \
 		--fail-on-errors
 
-.PHONY: crun-mlbom-reference-sign
+.PHONY: crun-mlbom-sign
 # Copy current ML-BOM as reference and sign it with the private key using container.
-crun-mlbom-reference-sign:
+crun-mlbom-sign:
 	@[ -f "$$HOME/.ssh/mlbom.key" ] || { echo "[*ERROR*] Requires private key at $$HOME/.ssh/mlbom.key"; exit 1; };
 	cp "mlbom/${MODEL}/mlbom.xml" "mlbom/${MODEL}/mlbom-reference.xml"
 	docker run --platform linux/amd64 --rm -v "$$(pwd)":/workspace -w /workspace -u $$(id -u):$$(id -g) \
@@ -241,11 +242,11 @@ crun-mlbom-reference-sign:
 		cyclonedx/cyclonedx-cli:0.30.0 sign bom "mlbom/${MODEL}/mlbom.xml" \
 		--key-file "$$HOME/.ssh/mlbom.key"
 
-.PHONY: crun-mlbom-reference-verify-sign
-# Verify signatures in the reference ML-BOM using the public key via container.
-crun-mlbom-reference-verify-sign:
+.PHONY: crun-mlbom-verify-sign
+# Verify signatures in the ML-BOM using the public key via container.
+crun-mlbom-verify-sign:
 	@[ -f "./pubkeys/mlbom.pub" ] || { echo "[*ERROR*] Requires public key at ./pubkeys/mlbom.pub"; exit 1; };
-	@[ -f "mlbom/${MODEL}/mlbom-reference.xml" ] || { echo "[*ERROR*] Requires reference ML-BOM at mlbom/${MODEL}/mlbom-reference.xml"; exit 1; };
+	@[ -f "mlbom/${MODEL}/mlbom.xml" ] || { echo "[*ERROR*] Requires ML-BOM at mlbom/${MODEL}/mlbom.xml"; exit 1; };
 	docker run --platform linux/amd64 --rm -v "$$(pwd)":/workspace -w /workspace -u $$(id -u):$$(id -g) \
 		cyclonedx/cyclonedx-cli:0.30.0 verify all "mlbom/${MODEL}/mlbom.xml" \
 		--key-file "./pubkeys/mlbom.pub"
