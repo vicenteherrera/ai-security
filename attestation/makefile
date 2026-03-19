@@ -256,7 +256,7 @@ crun-mlbom-verify-sign:
 .PHONY: cosign-generate-key-pair
 # Generate a Cosign keypair and move keys to ssh and pubkeys paths.
 cosign-generate-key-pair:
-	cosign generate-key-pair --yes
+	cosign generate-key-pair
 	mv cosign.key "$$HOME/.ssh"
 	mv cosign.pub "./pubkeys"
 
@@ -270,7 +270,7 @@ run-cosign-sign:
 		sig_file="$$OUTPUT_DIR/$$file.sig"; \
 		mkdir -p "$$(dirname "$$sig_file")" && \
 		echo "Signing: $$file" && \
-		COSIGN_PASSWORD="changeme" cosign sign-blob --key "$$HOME/.ssh/cosign.key" "$$file" --yes > "$$sig_file" || exit 1; \
+		cosign sign-blob --key "$$HOME/.ssh/cosign.key" --bundle "$$sig_file" "$$file" --yes || exit 1; \
 	done
 
 .PHONY: run-cosign-verify
@@ -283,7 +283,7 @@ run-cosign-verify:
 		sig_file="$$OUTPUT_DIR/$$file.sig"; \
 		[ -f "$$sig_file" ] || { echo "[*ERROR*] Missing signature: $$sig_file"; exit 1; }; \
 		echo "Verifying: $$file" && \
-		cosign verify-blob --key "$$PUBKEY" --signature "$$sig_file" "$$file" || exit 1; \
+		cosign verify-blob --key "$$PUBKEY" --bundle "$$sig_file" "$$file" || exit 1; \
 	done
 
 # Cosign container ---------------------------------------------------------
