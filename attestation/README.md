@@ -11,7 +11,14 @@ make run-container
 
 It won't work to check signatures of a container unless you setup a docker-in-docker environment in the host.
 
-To run directly, for `cosign` examples, you need the [cosign binary installed](https://github.com/sigstore/cosign?tab=readme-ov-file#installation). For `CycloneDX` examples you need [it's cli installed](https://github.com/CycloneDX/cyclonedx-cli).
+To run directly, for `cosign` examples, you need the [cosign binary installed](https://github.com/sigstore/cosign?tab=readme-ov-file#installation). 
+
+For `CycloneDX` examples you need [it's cli installed](https://github.com/CycloneDX/cyclonedx-cli).
+
+To use the cosign container image, you need to log into dhi.io with your Docker Hub credentials
+```shell
+docker login dhi.io
+```
 
 ## Usage
 
