@@ -7,3 +7,6 @@ attestation/mlbom/**
 attestation/digest.digest
 pentest/workspace/metasploitable_scan.txt
 pentest/workspace/metasploitable_scan.xml
+ssh/id_ed25519.pub
+ssh/test.txt
+**/.DS_Store
