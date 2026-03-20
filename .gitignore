@@ -5,3 +5,5 @@ attestation/digest/**
 attestation/gpg/**
 attestation/mlbom/**
 attestation/digest.digest
+pentest/workspace/metasploitable_scan.txt
+pentest/workspace/metasploitable_scan.xml
