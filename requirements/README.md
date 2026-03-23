@@ -14,20 +14,10 @@ Python 3 is included with Xcode Command Line Tools, or install via Homebrew:
 brew install python
 ```
 
-### Linux (Debian/Ubuntu)
+### Linux (Debian/Ubuntu) / Windows (WSL2)
 
 ```bash
 sudo apt update && sudo apt install -y python3 python3-pip python3-venv
-```
-
-### Windows
-
-Download the installer from [python.org](https://www.python.org/downloads/) and run it. Make sure to check **"Add Python to PATH"** during installation.
-
-Alternatively, using `winget`:
-
-```powershell
-winget install Python.Python.3.12
 ```
 
 ---
@@ -36,7 +26,7 @@ winget install Python.Python.3.12
 
 [Poetry](https://python-poetry.org/) is used for Python dependency management.
 
-### macOS / Linux
+### macOS / Linux (Debian/Ubuntu) / Windows (WSL2)
 
 ```bash
 curl -sSL https://install.python-poetry.org | python3 -
@@ -47,14 +37,6 @@ Add Poetry to your PATH (if not done automatically):
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
 ```
-
-### Windows (PowerShell)
-
-```powershell
-(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
-```
-
-Poetry will be installed to `%APPDATA%\Python\Scripts`. Add it to your PATH if needed.
 
 ---
 
@@ -70,7 +52,9 @@ Alternatively, using Homebrew:
 brew install --cask docker
 ```
 
-### Linux (Debian/Ubuntu)
+### Linux (Debian/Ubuntu) / Windows (WSL2)
+
+On Windows, install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/) with the WSL2 backend. On Linux:
 
 ```bash
 # Add Docker's official GPG key and repository
@@ -89,10 +73,6 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
 See the [official docs](https://docs.docker.com/engine/install/) for other distributions.
-
-### Windows
-
-Install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/). WSL2 backend is recommended.
 
 ---
 
@@ -121,3 +101,39 @@ Install it using the provided script:
 ```
 
 The script auto-detects your OS and architecture, then downloads the latest release from GitHub.
+
+---
+
+## Make
+
+### macOS
+
+Included with Xcode Command Line Tools:
+
+```bash
+xcode-select --install
+```
+
+### Linux (Debian/Ubuntu) / Windows (WSL2)
+
+```bash
+sudo apt update && sudo apt install -y make
+```
+
+---
+
+## jq
+
+[jq](https://jqlang.github.io/jq/) is a command-line JSON processor used in the vulnerability scanning exercises.
+
+### macOS
+
+```bash
+brew install jq
+```
+
+### Linux (Debian/Ubuntu) / Windows (WSL2)
+
+```bash
+sudo apt update && sudo apt install -y jq
+```
