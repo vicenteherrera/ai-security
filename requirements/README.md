@@ -40,6 +40,30 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ---
 
+## uv
+
+[uv](https://docs.astral.sh/uv/) is a fast Python package and project manager that can replace pip, venv, and Poetry. It automatically creates virtual environments when running `uv sync` or `uv run`.
+
+### macOS / Linux (Debian/Ubuntu) / Windows (WSL2)
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Or with Homebrew (macOS/Linux):
+
+```bash
+brew install uv
+```
+
+Verify the installation:
+
+```bash
+uv --version
+```
+
+---
+
 ## Docker
 
 ### macOS

@@ -1,3 +1,17 @@
+[project]
+name = "pickle-tampering-lab"
+description = "Lab exercise demonstrating Pickle file security risks in AI/ML"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "scikit-learn",
+    "fickling==0.1.3",
+    "picklescan==0.0.16",
+    "jupyter",
+    "pickle-mixin==1.0.2",
+]
+
 [tool.poetry]
 name = "pickle-tampering-lab"
 description = "Lab exercise demonstrating Pickle file security risks in AI/ML"
@@ -12,7 +26,3 @@ fickling = "0.1.3"
 picklescan = "0.0.16"
 jupyter = "*"
 pickle-mixin = "1.0.2"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
