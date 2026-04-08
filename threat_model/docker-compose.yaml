@@ -1,6 +1,7 @@
 services:
   threat-dragon:
-    image: owasp/threat-dragon:v2.6.0
+    image: owasp/threat-dragon:${THREAT_DRAGON_TAG:-v2.6.0}
+    platform: ${PLATFORM:-linux/amd64}
     container_name: threat-dragon
     env_file:
       - ./.env
