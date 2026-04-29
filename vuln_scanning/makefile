@@ -61,7 +61,7 @@ clean: ## Remove generated report files
 # Container-based targets (trivy via Docker)
 # ---------------------------------------------------------------------------
 
-TRIVY_CMD := docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy
+TRIVY_CMD := docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3
 
 .PHONY: cscan
 # Full vulnerability scan of python:3.11 (container)
